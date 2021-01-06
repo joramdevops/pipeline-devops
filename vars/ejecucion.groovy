@@ -2,12 +2,12 @@ def call(){
   
 pipeline {
         agent any
-     //   parameters { 
+   
                 parameters { choice(name: 'buildtool', choices: ['gradle','maven'], description: 'Seleccione la herramienta para la aplicación') }
-                string(name: 'stage', defaultValue: '', description: '')
-       // }
+               // string(name: 'stage', defaultValue: '', description: '')
+       
         stages {
-                stage('Pipelines') {
+                stage('pipeline') {
                         environment {
                             LAST_STAGE_NAME = ''
                         }
