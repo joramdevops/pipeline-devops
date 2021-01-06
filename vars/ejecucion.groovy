@@ -3,7 +3,7 @@ def call(){
 pipeline {
         agent any
         parameters { 
-                parameters { choice(name: 'herramienta', choices: ['gradle','maven'], description: 'Seleccione la herramienta para la aplicación') }
+                parameters { choice(name: 'buildtool', choices: ['gradle','maven'], description: 'Seleccione la herramienta para la aplicación') }
                 string(name: 'stage', defaultValue: '', description: '')
         }
         stages {
@@ -14,10 +14,10 @@ pipeline {
                         steps {
                                 script {
 
-                                    println 'herramienta: ' + params.herramienta
+                                    println 'herramienta: ' + params.buildtool
                                     println 'stage: ' + params.stage
                                         
-                                        if(params.herramienta == 'gradle'){ 
+                                        if(params.buildtool == 'gradle'){ 
                                         gradle.call()
                                          }else{
                                          maven.call()
@@ -28,10 +28,10 @@ pipeline {
         }
          post {
                 success {
-                        slackSend color: 'good', message: "[Joram Diaz][${env.JOB_NAME}][${params.herramienta}] Ejecución exitosa."
+                        slackSend color: 'good', message: "[Joram Diaz][${env.JOB_NAME}][${params.buildtool}] Ejecución exitosa."
                 }
                 failure {
-                        slackSend color: 'danger', message: "[Joram Diaz][${env.JOB_NAME}][${params.herramienta}] Ejecución fallida en stage [${env.LAST_STAGE_NAME}]."
+                        slackSend color: 'danger', message: "[Joram Diaz][${env.JOB_NAME}][${params.buildtool}] Ejecución fallida en stage [${env.LAST_STAGE_NAME}]."
                                 }
                 }
         }
