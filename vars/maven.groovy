@@ -13,29 +13,29 @@ def call()  {
     if(_stage.contains('Compile')) {
         stage('Compile') {
             env.LAST_STAGE_NAME = env.STAGE_NAME
-            sh "mvn clean compile -e"
+            sh "./mvnw clean compile -e"
         }
     }
     
          if(_stage.contains('Test')) {
         stage('Test') {
             env.LAST_STAGE_NAME = env.STAGE_NAME
-            sh "mvn clean test -e"
+            sh "./mvnw clean test -e"
         }
     }
 
     if(_stage.contains('Jar')) {
         stage('Jar') {
             env.LAST_STAGE_NAME = env.STAGE_NAME
-            sh "mvn clean package -e"
+            sh "./mvnw clean package -e"
         }
     }
 
     if(_stage.contains('Sonar')) {
         stage('Sonar') {
             env.LAST_STAGE_NAME = env.STAGE_NAME
-            withSonarQubeEnv(installationName: 'Sonar') {
-                sh 'mvn org.sonarsource.scanner.maven:sonar-maven-plugin:3.7.0.1746:sonar'
+            withSonarQubeEnv(installationName: 'sonar-server') {
+                sh './mvnw org.sonarsource.scanner.maven:sonar-maven-plugin:3.7.0.1746:sonar'
             }
         }
     }
@@ -43,7 +43,7 @@ def call()  {
     if(_stage.contains('Run')) {
         stage('Run') {
             env.LAST_STAGE_NAME = env.STAGE_NAME
-            sh 'mvn spring-boot:run &'
+            sh './mvnw spring-boot:run &'
             sleep 10
         }
       }
