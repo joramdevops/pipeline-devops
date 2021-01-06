@@ -2,29 +2,28 @@ def call(){
   
 pipeline {
     agent any
+  
     parameters { 
-         choice(name: 'buildtool', choices: ['gradle','maven'], description: 'Seleccione la herramienta para la aplicación') }
-         string(name: 'stage', defaultValue: '', description: '')
-       
-         stages {
-                stage('pipeline') {
-                        environment {
-                            LAST_STAGE_NAME = ''
-                        }
-                        steps {
-                           script {
-                              println 'herramienta: ' + params.buildtool
-                              println 'stage: ' + params.stage
-                                        
-                              if(params.buildtool == 'gradle'){ 
-                              gradle.call()
-                              }else{
-                              maven.call()
-                              }
-                           }
-                        }
-                }
-        }
+         choice(name: 'buildtool', choices: ['gradle','maven'], description: 'Seleccione la herramienta para la aplicación') 
+         string(name: 'stages', defaultValue: '', description: 'Escriba el stage que quiere ejecutar: stage1;stage2;stage3. Sino escribe se ejecutarán todos')
+    }   
+      
+    stages {
+         stage('Pipeline') {
+               steps {
+               script {
+                      env.VARIABLE = 'asasas'       
+                      println 'La herramienta de ejecucion es: ' + params.buildtool
+                            
+                      if(params.buildtool == 'gradle'){ 
+                         gradle.call()
+                      }else{
+                         maven.call()
+                         }
+                         }
+                      }
+                      }
+    }
          post {
                 success {
                         slackSend color: 'good', message: "[Joram Diaz][${env.JOB_NAME}][${params.buildtool}] Ejecución exitosa."
