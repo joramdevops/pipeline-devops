@@ -3,7 +3,7 @@ def call(){
 pipeline {
         agent any
         parameters { 
-                choice(name: 'herramienta', choices: ['gradle','maven'], description: 'Elección de herramienta de construcción para aplicación covid') 
+                parameters { choice(name: 'herramienta', choices: ['gradle','maven'], description: 'Seleccione la herramienta para la aplicación') }
                 string(name: 'stage', defaultValue: '', description: '')
         }
         stages {
@@ -28,10 +28,10 @@ pipeline {
         }
          post {
                 success {
-                        slackSend color: 'good', message: "Diego Perez][${env.JOB_NAME}][${params.herramienta}] Ejecución exitosa."
+                        slackSend color: 'good', message: "[Joram Diaz][${env.JOB_NAME}][${params.herramienta}] Ejecución exitosa."
                 }
                 failure {
-                        slackSend color: 'danger', message: "[Diego Perez][${env.JOB_NAME}][${params.herramienta}] Ejecución fallida en stage [${env.LAST_STAGE_NAME}]."
+                        slackSend color: 'danger', message: "[Joram Diaz][${env.JOB_NAME}][${params.herramienta}] Ejecución fallida en stage [${env.LAST_STAGE_NAME}]."
                                 }
                 }
         }
