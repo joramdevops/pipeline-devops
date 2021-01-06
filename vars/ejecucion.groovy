@@ -1,28 +1,27 @@
 def call(){
   
 pipeline {
-        agent any
-   
-                parameters { choice(name: 'buildtool', choices: ['gradle','maven'], description: 'Seleccione la herramienta para la aplicación') }
-               // string(name: 'stage', defaultValue: '', description: '')
+    agent any
+    parameters { 
+         choice(name: 'buildtool', choices: ['gradle','maven'], description: 'Seleccione la herramienta para la aplicación') }
+         string(name: 'stage', defaultValue: '', description: '')
        
-        stages {
+         stages {
                 stage('pipeline') {
                         environment {
                             LAST_STAGE_NAME = ''
                         }
                         steps {
-                                script {
-
-                                    println 'herramienta: ' + params.buildtool
-                                    println 'stage: ' + params.stage
+                           script {
+                              println 'herramienta: ' + params.buildtool
+                              println 'stage: ' + params.stage
                                         
-                                        if(params.buildtool == 'gradle'){ 
-                                        gradle.call()
-                                         }else{
-                                         maven.call()
-                                         }
-                                }
+                              if(params.buildtool == 'gradle'){ 
+                              gradle.call()
+                              }else{
+                              maven.call()
+                              }
+                           }
                         }
                 }
         }
