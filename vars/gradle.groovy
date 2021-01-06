@@ -13,7 +13,7 @@ def call(){
        if(_stage.contains('Build&Test')) {
             stage('Build&Test') {
               env.LAST_STAGE_NAME = env.STAGE_NAME
-                sh "gradle clean build"
+                sh "./gradlew clean build"
             }
          }   
 
@@ -21,7 +21,7 @@ def call(){
             stage('Sonar'){
                env.LAST_STAGE_NAME = env.STAGE_NAME
                def scannerHome = tool 'sonar-scanner';
-               withSonarQubeEnv('Sonar'){ 
+               withSonarQubeEnv('sonar-server'){ 
                    sh "${scannerHome}/bin/sonar-scanner -Dsonar.projectKey=ejemplo-gradle -Dsonar.java.binaries=build"
                 }  
             }
