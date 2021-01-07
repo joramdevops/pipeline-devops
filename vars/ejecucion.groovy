@@ -5,7 +5,9 @@ pipeline {
   
     parameters { 
          choice(name: 'buildtool', choices: ['gradle','maven'], description: 'Seleccione la herramienta para la aplicación') 
-      // string(name: 'stages', defaultValue: '', description: 'Escriba el stage que quiere ejecutar: "Build&Test", "Sonar", "RunJar", "Rest", "Nexus". Sino escribe se ejecutarán todos')
+         
+         string(name: 'stages', defaultValue: '', description: 'Escriba el stage que quiere ejecutar para Graven: "Build&Test", "Sonar", "RunJar", "Rest", "Nexus". Sino escribe se ejecutarán todos')
+         string(name: 'stages', defaultValue: '', description: 'Escriba el stage que quiere ejecutar para Maven: "Compile", "Test", "Jar", "Sonar", "Run", "Rest", "Nexus". Sino escribe se ejecutarán todos')   
     }   
       
     stages {
@@ -17,10 +19,8 @@ pipeline {
                             
                       if(params.buildtool == 'gradle'){ 
                          gradle.call()
-                         string(name: 'stages', defaultValue: '', description: 'Escriba el stage que quiere ejecutar: "Build&Test", "Sonar", "RunJar", "Rest", "Nexus". Sino escribe se ejecutarán todos')
-                      }else{
+                         }else{
                          maven.call()
-                         string(name: 'stages', defaultValue: '', description: 'Escriba el stage que quiere ejecutar: "Compile", "Test", "Jar", "Sonar", "Run", "Rest", "Nexus". Sino escribe se ejecutarán todos')
                          }
                          }
                       }
