@@ -3,9 +3,9 @@ def call(){
     stages = ["Build&Test", "Sonar", "RunJar", "Rest", "Nexus"] as String[]
     
     Stage = params.stage ? params.stage.split(';') : stages
-    Stage.each { el ->
-        if (!stages.contains(el)) {
-            throw new Exception("Stage: $el no es una opción válida.")
+    Stage.each { opcion ->
+        if (!stages.contains(opcion)) {
+            throw new Exception("Stage: $opcion no es válido, vuelva a ingresar.")
         }
     }
      
