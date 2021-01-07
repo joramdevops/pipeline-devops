@@ -1,5 +1,5 @@
 def call(){
-    figlet 'gradle'
+    figlet 'Gradle'
     stages = ["Build&Test", "Sonar", "RunJar", "Rest", "Nexus"] as String[]
     
     Stage = params.stage ? params.stage.split(';') : stages
