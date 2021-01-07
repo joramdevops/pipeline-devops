@@ -1,23 +1,25 @@
 def call(){
-    stages = ["Build&Test", "Sonar", "Run", "Rest", "Nexus"] as String[]
+    figlet 'gradle'
+    stages = ["Build&Test", "Sonar", "RunJar", "Rest", "Nexus"] as String[]
     
-        // Si stage es vacio se consideran todos los stages
     Stage = params.stage ? params.stage.split(';') : stages
-    // Se valida stage ingresado
     Stage.each { el ->
         if (!stages.contains(el)) {
             throw new Exception("Stage: $el no es una opción válida.")
         }
     }
+     
 
        if(Stage.contains('Build&Test')) {
-            stage('Build&Test') {
+           figlet 'Build&Test' 
+           stage('Build&Test') {
               env.VARIABLE = env.STAGE_NAME
                 sh "./gradlew clean build"
             }
          }   
 
         if(Stage.contains("Sonar")){
+            figlet 'Sonar'
             stage('Sonar'){
                env.VARIABLE = env.STAGE_NAME
                def scannerHome = tool 'sonar-scanner';
@@ -28,6 +30,7 @@ def call(){
         }
 
         if(Stage.contains("Run")){
+            figlet 'Run'
             stage('Run'){
               env.VARIABLE = env.STAGE_NAME
                 sh 'nohup gradle bootRun &'
@@ -36,6 +39,7 @@ def call(){
         }
 
         if(Stage.contains("Rest")){
+            figlet 'Rest'
             stage('Rest'){
                 env.VARIABLE = env.STAGE_NAME
                 sh 'curl -X GET http://localhost:8081/rest/mscovid/test?msg=testing'
@@ -43,6 +47,7 @@ def call(){
         }
 
         if(Stage.contains("Nexus")){
+            figlet 'Nexus'
             stage('Nexus'){
                 env.VARIABLE = env.STAGE_NAME
                 nexusPublisher nexusInstanceId: 'nexus', nexusRepositoryId: 'test-nexus', packages: [[$class: 'MavenPackage', mavenAssetList: [[classifier: '', extension: 'jar', filePath: 'build/libs/DevOpsUsach2020-0.0.1.jar']], mavenCoordinate: [artifactId: 'DevOpsUsach2020', groupId: 'com.devopsusach2020', packaging: 'jar', version: '0.0.1']]]    
