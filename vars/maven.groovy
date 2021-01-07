@@ -1,64 +1,70 @@
 def call()  {
+    figlet 'Maven'
     stages = ['Compile', 'Test', 'Jar', 'Sonar', 'Run', 'Rest', 'Nexus']
 
-    // Si stage es vacio se consideran todos los stages
-    _stage = params.stage ? params.stage.split(';') : stages
-    // Se valida stage ingresado
-    _stage.each { el ->
-        if (!stages.contains(el)) {
-            throw new Exception("Stage: $el no es una opción válida.")
+    Stage = params.stage ? params.stage.split(';') : stages
+    Stage.each { opcion ->
+        if (!stages.contains(opcion)) {
+            throw new Exception("Stage: $opcion no es válido, vuelva a ingresar.")
         }
     }
 
-    if(_stage.contains('Compile')) {
+    if(Stage.contains('Compile')) {
+        figlet 'Compile'
         stage('Compile') {
-            env.LAST_STAGE_NAME = env.STAGE_NAME
+            env.VARIABLE = env.STAGE_NAME
             sh "./mvnw clean compile -e"
         }
     }
     
-         if(_stage.contains('Test')) {
-        stage('Test') {
-            env.LAST_STAGE_NAME = env.STAGE_NAME
-            sh "./mvnw clean test -e"
+         if(Stage.contains('Test')) {
+            figlet 'Test'
+            stage('Test') {
+                env.VARIABLE = env.STAGE_NAME
+                sh "./mvnw clean test -e"
         }
     }
 
-    if(_stage.contains('Jar')) {
+    if(Stage.contains('Jar')) {
+        figlet 'Jar'
         stage('Jar') {
-            env.LAST_STAGE_NAME = env.STAGE_NAME
+            env.VARIABLE = env.STAGE_NAME
             sh "./mvnw clean package -e"
         }
     }
 
-    if(_stage.contains('Sonar')) {
+    if(Stage.contains('Sonar')) {
+        figlet 'Sonar'
         stage('Sonar') {
-            env.LAST_STAGE_NAME = env.STAGE_NAME
+            env.VARIABLE = env.STAGE_NAME
             withSonarQubeEnv(installationName: 'sonar-server') {
                 sh './mvnw org.sonarsource.scanner.maven:sonar-maven-plugin:3.7.0.1746:sonar'
             }
         }
     }
 
-    if(_stage.contains('Run')) {
+    if(Stage.contains('Run')) {
+        figlet 'Run'
         stage('Run') {
-            env.LAST_STAGE_NAME = env.STAGE_NAME
+            env.VARIABLE = env.STAGE_NAME
             sh './mvnw spring-boot:run &'
             sleep 10
         }
       }
 
-    if(_stage.contains('Rest')) {
+    if(Stage.contains('Rest')) {
+         figlet 'Rest'
          stage('Rest') {
-            env.LAST_STAGE_NAME = env.STAGE_NAME
+            env.VARIABLE = env.STAGE_NAME
             sh 'curl -X GET http://localhost:8081/rest/mscovid/test?msg=testing'
         }
       }
   
 
-    if(_stage.contains('Nexus')) {
+    if(Stage.contains('Nexus')) {
+        figlet 'Nexus'
         stage('Nexus') {
-            env.LAST_STAGE_NAME = env.STAGE_NAME
+            env.VARIABLE = env.STAGE_NAME
             nexusPublisher nexusInstanceId: 'nexus', nexusRepositoryId: 'test-nexus', packages: [[$class: 'MavenPackage', mavenAssetList: [[classifier: '', extension: 'jar', filePath: 'build/DevOpsUsach2020-0.0.1.jar']], mavenCoordinate: [artifactId: 'DevOpsUsach2020', groupId: 'com.devopsusach2020', packaging: 'jar', version: '0.0.1']]]
         }
     }
