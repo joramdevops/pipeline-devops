@@ -14,7 +14,7 @@ pipeline {
                steps {
                script {
                       env.VARIABLE = 'asasas'       
-                      println 'La herramienta de ejecucion es: ' + params.buildtool
+                      println 'La herramienta seleccionada es: ' + params.buildtool
                             
                       if(params.buildtool == 'gradle'){ 
                          gradle.call()
