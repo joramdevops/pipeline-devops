@@ -2,7 +2,7 @@ import pipeline.*
 def call(String chosenStages)  {
     figlet 'Maven'
     
-    def pipelineStages = ['compile', 'test', 'jar', 'sonar', 'run', 'rest', 'nexus']
+    def pipelineStages = ['compile', 'test', 'jar', 'run', 'rest', 'sonar','nexus']
     
     def utils  = new test.UtilMethods()
     def stages = util.getValidatedStages(chosenStages, pipelineStages)
@@ -18,7 +18,7 @@ def call(String chosenStages)  {
         }
         }
     }
-    }
+}
 
     def compile () {
         figlet 'Compile'
@@ -31,30 +31,29 @@ def call(String chosenStages)  {
         sh "./mvnw clean test -e"
     }
 
-    def Jar () {
+    def jar () {
         figlet 'Jar'
         sh "./mvnw clean package -e"
     }
 
-    def runJar() {
-        figlet 'Run Jar'
+    def run() {
+        figlet 'Run'
         sh './mvnw spring-boot:run &'
     }
 
     def rest() {
         figlet 'Rest'
-        sh 'curl -X GET http://localhost:8081/rest/mscovid/test?msg=testing'
-        
+        sh 'curl -X GET http://localhost:8081/rest/mscovid/test?msg=testing'    
     }
             
-    def Sonar () {
+    def sonar () {
         figlet 'Sonar'
         withSonarQubeEnv(installationName: 'sonar-server') {
         sh './mvnw org.sonarsource.scanner.maven:sonar-maven-plugin:3.7.0.1746:sonar'
         }
     }
 
-    def Nexus() {
+    def nexus() {
         figlet 'Nexus'
         nexusPublisher nexusInstanceId: 'nexus', nexusRepositoryId: 'test-nexus', packages: [[$class: 'MavenPackage', mavenAssetList: [[classifier: '', extension: 'jar', filePath: 'build/DevOpsUsach2020-0.0.1.jar']], mavenCoordinate: [artifactId: 'DevOpsUsach2020', groupId: 'com.devopsusach2020', packaging: 'jar', version: '0.0.1']]]
         
