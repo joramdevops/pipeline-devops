@@ -6,32 +6,36 @@ pipeline {
     parameters { 
          choice(name: 'buildtool', choices: ['gradle','maven'], description: 'Seleccione la herramienta para la aplicación') 
          
-         string(name: 'stages', defaultValue: '', description: 'Escriba el stage que quiere ejecutar. Sino escribe se ejecutarán todos')
+         string(name: 'Stage', defaultValue: '', description: 'Escriba el stage que quiere ejecutar. Sino escribe se ejecutarán todos')
     }   
       
     stages {
          stage('Pipeline') {
+               
+               env.VARIABLE = ''  
+               
                steps {
                script {
-                      env.VARIABLE = 'asasas'       
-                      println 'La herramienta seleccionada es: ' + params.buildtool
+                          
+               println 'La herramienta seleccionada es: ' + params.buildtool
+               println 'El stage seleccionado es: ' + params.Stage
                             
                       if(params.buildtool == 'gradle'){ 
                          gradle.call()
                          }else{
                          maven.call()
-                         }
-                         }
-                      }
-                      }
+                        }
+                    }
+                }
+        }
     }
          post {
                 success {
                         slackSend color: 'good', message: "[Joram Diaz][${env.JOB_NAME}][${params.buildtool}] Ejecución exitosa."
-                }
+                        }
                 failure {
                         slackSend color: 'danger', message: "[Joram Diaz][${env.JOB_NAME}][${params.buildtool}] Ejecución fallida en stage [${env.VARIABLE}]."
-                                }
+                        }
                 }
         }
  }
