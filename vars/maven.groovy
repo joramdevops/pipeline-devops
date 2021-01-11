@@ -1,7 +1,7 @@
 def call()  {
     figlet 'Maven'
     
-    stages = ['compile', 'test', 'jar', 'run', 'rest', 'sonar','nexus']
+    stages = ['compile','test','jar','run','sonar','rest','nexus']
     
     Stage = params.stage ? params.stage.split(';') : stages
         Stage.each { opcion ->
@@ -43,20 +43,21 @@ def call()  {
         }
     }
     
-   if(Stage.contains('rest')) {
-        figlet 'Rest'
-        stage('rest') {
-            env.VARIABLE = env.STAGEIN
-            sh 'curl -X GET http://localhost:8081/rest/mscovid/test?msg=testing'   
-        }
-    }
-
+    
     if(Stage.contains('sonar')) {
         figlet 'Sonar'
         stage('sonar') {
             env.VARIABLE = env.STAGEIN
             withSonarQubeEnv(installationName: 'sonar-server') {
             sh './mvnw org.sonarsource.scanner.maven:sonar-maven-plugin:3.7.0.1746:sonar'   
+        }
+    }
+    
+   if(Stage.contains('rest')) {
+        figlet 'Rest'
+        stage('rest') {
+            env.VARIABLE = env.STAGEIN
+            sh 'curl -X GET http://localhost:8081/rest/mscovid/test?msg=testing'   
         }
     } 
             
