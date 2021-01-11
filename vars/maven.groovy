@@ -1,63 +1,73 @@
-import pipeline.*
-def call(String chosenStages)  {
+def call()  {
     figlet 'Maven'
     
-    def pipelineStages = ['compile', 'test', 'jar', 'run', 'rest', 'sonar','nexus']
+    stages = ['compile', 'test', 'jar', 'run', 'rest', 'sonar','nexus']
     
-    def utils  = new test.UtilMethods()
-    def stages = util.getValidatedStages(chosenStages, pipelineStages)
+    Stage = params.stage ? params.stage.split(';') : stages
+        Stage.each { opcion ->
 
- 
-    stages.each { 
-        stage(it){
-        try {
-            "${it}"()
-        }
-        catch(Exception e){
-            error "Stage ${it} tiene problemas: ${e}"        
-        }
+        if (!stages.contains(opcion)) {
+            throw new Exception("Stage: $opcion vuelva a ingresar un stage valido.")
         }
     }
-}
 
-    def compile () {
+    if(Stage.contains('compile')) {
         figlet 'Compile'
-        sh "./mvnw clean compile -e"
+        stage('compile') {
+            env.VARIABLE = env.STAGEIN
+            sh "./mvnw clean compile -e"
+        }
     }
     
-    
-    def test() {
+    if(Stage.contains('test')) {
         figlet 'Test'
-        sh "./mvnw clean test -e"
-    }
-
-    def jar () {
-        figlet 'Jar'
-        sh "./mvnw clean package -e"
-    }
-
-    def run() {
-        figlet 'Run'
-        sh './mvnw spring-boot:run &'
-    }
-
-    def rest() {
-        figlet 'Rest'
-        sh 'curl -X GET http://localhost:8081/rest/mscovid/test?msg=testing'    
-    }
-            
-    def sonar () {
-        figlet 'Sonar'
-        withSonarQubeEnv(installationName: 'sonar-server') {
-        sh './mvnw org.sonarsource.scanner.maven:sonar-maven-plugin:3.7.0.1746:sonar'
+        stage('test') {
+            env.VARIABLE = env.STAGEIN
+            sh "./mvnw clean test -e"
         }
     }
 
-    def nexus() {
-        figlet 'Nexus'
-        nexusPublisher nexusInstanceId: 'nexus', nexusRepositoryId: 'test-nexus', packages: [[$class: 'MavenPackage', mavenAssetList: [[classifier: '', extension: 'jar', filePath: 'build/DevOpsUsach2020-0.0.1.jar']], mavenCoordinate: [artifactId: 'DevOpsUsach2020', groupId: 'com.devopsusach2020', packaging: 'jar', version: '0.0.1']]]
-        
+    if(Stage.contains('jar')) {
+        figlet 'Jar'
+        stage('jar') {
+            env.VARIABLE = env.STAGEIN
+            sh "./mvnw clean package -e"
+        }
     }
+
+    if(Stage.contains('run')) {
+        figlet 'Run'
+        stage('run') {
+            env.VARIABLE = env.STAGEIN
+            sh './mvnw spring-boot:run &'
+        }
+    }
+    
+   if(Stage.contains('rest')) {
+        figlet 'Rest'
+        stage('rest') {
+            env.VARIABLE = env.STAGEIN
+            sh 'curl -X GET http://localhost:8081/rest/mscovid/test?msg=testing'   
+        }
+    }
+
+    if(Stage.contains('sonar')) {
+        figlet 'Sonar'
+        stage('sonar') {
+            env.VARIABLE = env.STAGEIN
+            withSonarQubeEnv(installationName: 'sonar-server') {
+            sh './mvnw org.sonarsource.scanner.maven:sonar-maven-plugin:3.7.0.1746:sonar'   
+        }
+    } 
+            
+    if(Stage.contains('nexus')) {
+        figlet 'Nexus'
+        stage('nexus') {
+            env.VARIABLE = env.STAGEIN
+            nexusPublisher nexusInstanceId: 'nexus', nexusRepositoryId: 'test-nexus', packages: [[$class: 'MavenPackage', mavenAssetList: [[classifier: '', extension: 'jar', filePath: 'build/DevOpsUsach2020-0.0.1.jar']], mavenCoordinate: [artifactId: 'DevOpsUsach2020', groupId: 'com.devopsusach2020', packaging: 'jar', version: '0.0.1']]]
+        }
+    } 
+
 }
 
 return this;
