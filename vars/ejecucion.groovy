@@ -6,19 +6,16 @@ pipeline {
     parameters { 
          choice(name: 'buildtool', choices: ['gradle','maven'], description: 'Seleccione la herramienta para la aplicación') 
          
-         string(name: 'Stage', defaultValue: '', description: 'Escriba el stage que quiere ejecutar. Sino escribe se ejecutarán todos')
+         string(name: 'stages', defaultValue: '', description: 'Escriba el stage que quiere ejecutar. Sino escribe se ejecutarán todos')
     }   
       
     stages {
          stage('Pipeline') {
-               
-               env.VARIABLE = ''  
-               
-               steps {
+            steps {
                script {
                           
                println 'La herramienta seleccionada es: ' + params.buildtool
-               println 'El stage seleccionado es: ' + params.Stage
+               println 'El stage seleccionado es: ' + params.stages
                             
                       if(params.buildtool == 'gradle'){ 
                          gradle.call()
