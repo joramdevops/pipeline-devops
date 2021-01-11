@@ -5,7 +5,7 @@ def call(){
     Stage = params.stage ? params.stage.split(';') : stages
     Stage.each { opcion ->
         if (!stages.contains(opcion)) {
-            throw new Exception("Stage: $opcion no es válido, vuelva a ingresar.")
+            throw new Exception("Stage: $opcion vuelva a ingresar un stage valido.")
         }
     }
      
